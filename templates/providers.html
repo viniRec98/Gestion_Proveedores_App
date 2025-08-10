@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><title>Proveedores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Proveedores</h3>
+      <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-secondary">Salir</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="alert alert-{{cat}}">{{msg}}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Búsqueda -->
+    <form class="row g-2 mb-3" method="get" action="{{ url_for('provider.list_providers') }}">
+      <div class="col-md-4">
+        <input name="name" value="{{ qname }}" class="form-control" placeholder="Nombre de empresa">
+      </div>
+      <div class="col-md-3">
+        <select name="type" class="form-select">
+          <option value="">Tipo (todos)</option>
+          <option value="insumos"     {% if qtype=='insumos' %}selected{% endif %}>insumos</option>
+          <option value="transporte"  {% if qtype=='transporte' %}selected{% endif %}>transporte</option>
+          <option value="maquinaria"  {% if qtype=='maquinaria' %}selected{% endif %}>maquinaria</option>
+          <option value="otro"        {% if qtype=='otro' %}selected{% endif %}>otro</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Buscar</button>
+      </div>
+    </form>
+
+    <!-- Crear -->
+    <div class="card p-3 mb-3">
+      <h5>Registrar proveedor</h5>
+      <form method="post" class="row g-2">
+        <div class="col-md-6"><input name="company_name" class="form-control" placeholder="Nombre de la empresa" required></div>
+        <div class="col-md-6"><input name="contact_person" class="form-control" placeholder="Persona de contacto"></div>
+        <div class="col-md-4"><input name="email" class="form-control" placeholder="Correo"></div>
+        <div class="col-md-2">
+          <select name="type" class="form-select">
+            <option value="insumos">insumos</option>
+            <option value="transporte">transporte</option>
+            <option value="maquinaria">maquinaria</option>
+            <option value="otro">otro</option>
+          </select>
+        </div>
+        <div class="col-md-2"><input name="nit" class="form-control" placeholder="NIT/RTU"></div>
+        <div class="col-md-2"><input name="phone" class="form-control" placeholder="Teléfono"></div>
+        <div class="col-md-2"><input name="city" class="form-control" placeholder="Ciudad"></div>
+        <div class="col-12"><button class="btn btn-success mt-2">Guardar</button></div>
+      </form>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Empresa</th><th>Contacto</th><th>Tipo</th><th>NIT</th><th>Tel</th><th>Ciudad</th><th>Creado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in providers %}
+          <tr>
+            <td>{{ p.company_name }}</td>
+            <td>{{ p.contact_person }}</td>
+            <td>{{ p.type }}</td>
+            <td>{{ p.nit }}</td>
+            <td>{{ p.phone }}</td>
+            <td>{{ p.city }}</td>
+            <td>{{ p.created_at.strftime("%Y-%m-%d %H:%M") if p.created_at else "" }}</td>
+            <td class="d-flex gap-2">
+              <a class="btn btn-sm btn-primary" href="{{ url_for('provider.edit_provider', pid=p.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('provider.delete_provider', pid=p.id) }}" onsubmit="return confirm('¿Eliminar?')">
+                <button class="btn btn-sm btn-danger">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="8" class="text-center text-muted">Sin resultados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
