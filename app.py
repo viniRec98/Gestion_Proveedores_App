@@ -14,10 +14,10 @@ def create_app():
 
     # Registrar rutas
     from routes.auth_routes import auth_bp
-    from routes.provider_routes import provider_bp
+    #from routes.provider_routes import provider_bp
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(provider_bp)
+    #app.register_blueprint(provider_bp)
 
     return app
 
