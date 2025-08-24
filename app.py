@@ -19,7 +19,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(provider_bp)
 
-    # Redirect root to /create_admin
+    # Redireccionar a  /create_admin
     @app.route("/")
     def root():
         return redirect("/create_admin")
